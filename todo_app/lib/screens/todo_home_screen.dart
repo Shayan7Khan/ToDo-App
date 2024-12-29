@@ -3,9 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:todo_app/tasks_model.dart';
 
 class TodoHomeScreen extends StatefulWidget {
-  const TodoHomeScreen({
-    super.key,
-  });
+  const TodoHomeScreen({super.key});
 
   @override
   State<TodoHomeScreen> createState() => _TodoHomeScreenState();
@@ -14,17 +12,19 @@ class TodoHomeScreen extends StatefulWidget {
 class _TodoHomeScreenState extends State<TodoHomeScreen> {
   List<Task> task = [];
 
-  //function to add a task
-  void addTask(String title, String time) {
+  //adding the task to the list
+  void addTask(String title, DateTime time) {
     setState(() {
-      task.add(Task(title: title, time: time));
+      task.add(
+        Task(title: title, time: DateTime.now()),
+      );
     });
   }
 
-  //function to delete a task
-  void deleteTask(int index) {
+  //deleting the task from the list.
+  void deleteTask(index) {
     setState(() {
-      task.remove(index);
+      task.removeAt(index);
     });
   }
 
@@ -72,24 +72,60 @@ class _TodoHomeScreenState extends State<TodoHomeScreen> {
             const SizedBox(
               height: 16,
             ),
-            Row(
+            Column(
               children: [
                 Expanded(
                   child: Card(
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    child: ListView.builder(
-                        itemCount: task.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            leading: task[index].iscompleted
-                                ? Icon(Icons.radio_button_unchecked)
-                                : Icon(Icons.radio_button_checked),
-                            title: Text('hello world'),
-                            trailing: Text('time'),
-                          );
-                        }),
+                    child: task.isEmpty
+                        ? const Text('No Tasks Added Yet !')
+                        : ListView.builder(
+                            itemCount: task.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                leading: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      task[index].iscompleted =
+                                          !task[index].iscompleted;
+                                    });
+                                  },
+                                  icon: task[index].iscompleted
+                                      ? const Icon(Icons.radio_button_checked)
+                                      : const Icon(
+                                          Icons.radio_button_unchecked),
+                                ),
+                                title: Text(
+                                  task[index].title,
+                                  style: TextStyle(
+                                      decoration: task[index].iscompleted
+                                          ? TextDecoration.lineThrough
+                                          : null),
+                                ),
+                                trailing: Row(
+                                  children: [
+                                    Text(
+                                      DateFormat('hh:mm a')
+                                          .format(task[index].time),
+                                    ),
+                                    IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          deleteTask(index);
+                                        });
+                                      },
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                   ),
                 ),
               ],
