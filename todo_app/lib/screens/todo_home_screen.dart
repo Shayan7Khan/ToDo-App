@@ -1,9 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:todo_app/tasks.dart';
+import 'package:todo_app/tasks_model.dart';
 
-class TodoHomeScreen extends StatelessWidget {
-  const TodoHomeScreen({super.key});
+class TodoHomeScreen extends StatefulWidget {
+  const TodoHomeScreen({
+    super.key,
+  });
+
+  @override
+  State<TodoHomeScreen> createState() => _TodoHomeScreenState();
+}
+
+class _TodoHomeScreenState extends State<TodoHomeScreen> {
+  List<Task> task = [];
+
+  //function to add a task
+  void addTask(String title, String time) {
+    setState(() {
+      task.add(Task(title: title, time: time));
+    });
+  }
+
+  //function to delete a task
+  void deleteTask(int index) {
+    setState(() {
+      task.remove(index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +38,7 @@ class TodoHomeScreen extends StatelessWidget {
               fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
         ),
         backgroundColor: Theme.of(context).primaryColor,
-        toolbarHeight: 80,
+        toolbarHeight: 100,
         centerTitle: true,
         actions: [
           IconButton(
@@ -46,10 +69,31 @@ class TodoHomeScreen extends StatelessWidget {
               ),
               style: const TextStyle(color: Colors.grey, fontSize: 15),
             ),
-            SizedBox(
+            const SizedBox(
               height: 16,
             ),
-            Tasks()
+            Row(
+              children: [
+                Expanded(
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: ListView.builder(
+                        itemCount: task.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            leading: task[index].iscompleted
+                                ? Icon(Icons.radio_button_unchecked)
+                                : Icon(Icons.radio_button_checked),
+                            title: Text('hello world'),
+                            trailing: Text('time'),
+                          );
+                        }),
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),
